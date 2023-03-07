@@ -125,7 +125,7 @@ jobs:
       - name: Aurpublish!
         run: |
           docker exec "$(cat ${container_id})" bash -c "mkdir /repo && cd /repo && git clone https://github.com/pusi77/AUR"
-          docker exec "$(cat ${container_id})" bash -c "cd /repo/aur && aurpublish ${{ matrix.pkg }}"
+          docker exec "$(cat ${container_id})" bash -c "cd /repo/AUR && aurpublish ${{ matrix.pkg }}"
 
       - name: Remove ssh key
         run: docker exec "$(cat ${container_id})" bash -c "rm /root/.ssh/keys/aur"
