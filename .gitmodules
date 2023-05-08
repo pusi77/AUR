@@ -1,0 +1,21 @@
+[submodule "hypnotix-wayland"]
+	path = hypnotix-wayland
+	url = ssh://aur@aur.archlinux.org/hypnotix-wayland.git
+[submodule "subdomainizer"]
+	path = subdomainizer
+	url = ssh://aur@aur.archlinux.org/subdomainizer.git
+[submodule "python-cipheydists"]
+	path = python-cipheydists
+	url = ssh://aur@aur.archlinux.org/python-cipheydists.git
+[submodule "python-base91"]
+	path = python-base91
+	url = ssh://aur@aur.archlinux.org/python-base91.git
+[submodule "python-cipheycore"]
+	path = python-cipheycore
+	url = ssh://aur@aur.archlinux.org/python-cipheycore.git
+[submodule "python-pywhat"]
+	path = python-pywhat
+	url = ssh://aur@aur.archlinux.org/python-pywhat.git
+[submodule "ciphey"]
+	path = ciphey
+	url = ssh://aur@aur.archlinux.org/ciphey.git
