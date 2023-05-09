@@ -57,6 +57,7 @@ jobs:
       - name: Install Paru
         run: |
           docker exec "$(cat ${container_id})" pacman -S --needed base-devel --noconfirm
+          docker exec "$(cat ${container_id})" pacman -S cargo --noconfirm
           docker exec "$(cat ${container_id})" pacman -S git --noconfirm
           docker exec $(cat ${container_id}) mkdir /tmp/paru
           docker exec $(cat ${container_id}) chown -R devel: /tmp/paru      
