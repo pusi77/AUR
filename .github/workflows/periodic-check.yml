@@ -57,9 +57,9 @@ jobs:
       - name: Install Paru
         run: |
           docker exec "$(cat ${container_id})" pacman -S --needed base-devel --noconfirm
-          docker exec "$(cat ${container_id})" pacman -S git --noconfirm
-          docker exec "$(cat ${container_id})" pwd
-          docker exec "$(cat ${container_id})" git clone https://aur.archlinux.org/paru.git && cd paru && makepkg -si
+          docker exec "$(cat ${container_id})" pacman -S git --noconfirm          
+          docker exec -w /tmp "$(cat ${container_id})" git clone https://aur.archlinux.org/paru.git 
+          docker exec -w /tmp/paru "$(cat ${container_id})" makepkg -si
 
       - name: Namcap!
         run: if [ ! -f ci/"${{ matrix.pkg }}"/namcap_skip ]; then docker exec "$(cat ${container_id})" su devel sh -c "cd /pkg && namcap PKGBUILD"; fi
