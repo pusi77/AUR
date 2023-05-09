@@ -3,7 +3,7 @@ name: Nightly CI
 'on':
   push:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: '0 3 * * *'
 
 jobs:
 
@@ -54,11 +54,16 @@ jobs:
       - name: Install namcap
         run: docker exec "$(cat ${container_id})" pacman -S namcap --noconfirm
 
+      - name: Install Paru
+        run: |
+          docker exec "$(cat ${container_id})" pacman -S --needed base-devel --noconfirm
+          docker exec "$(cat ${container_id})" git clone https://aur.archlinux.org/paru.git && cd paru && makepkg -si
+
       - name: Namcap!
         run: if [ ! -f ci/"${{ matrix.pkg }}"/namcap_skip ]; then docker exec "$(cat ${container_id})" su devel sh -c "cd /pkg && namcap PKGBUILD"; fi
 
       - name: Makepkg!
-        run: docker exec "$(cat ${container_id})" su devel sh -c "cd /pkg && makepkg -sri --check --noconfirm"
+        run: docker exec "$(cat ${container_id})" su devel sh -c "cd /pkg && paru -Ui --check --noconfirm"
 
       - name: Execute stuff after makepkg if there is any.
         run: |
