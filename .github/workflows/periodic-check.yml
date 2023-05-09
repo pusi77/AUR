@@ -61,7 +61,7 @@ jobs:
           docker exec "$(cat ${container_id})" useradd -m pkgbuilder
           docker exec "$(cat ${container_id})" su - pkgbuilder          
           docker exec -w /tmp "$(cat ${container_id})" git clone https://aur.archlinux.org/paru.git 
-          docker exec "$(cat ${container_id})" su devel sh -c "makepkg -si"
+          docker exec -w /tmp/paru "$(cat ${container_id})" su devel sh -c "makepkg -si"
 
       - name: Namcap!
         run: if [ ! -f ci/"${{ matrix.pkg }}"/namcap_skip ]; then docker exec "$(cat ${container_id})" su devel sh -c "cd /pkg && namcap PKGBUILD"; fi
