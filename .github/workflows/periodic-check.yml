@@ -79,3 +79,5 @@ jobs:
 
       - name: Stop and remove container forcefully.
         run: docker rm -f "$(cat ${container_id})"
+        
+      - uses: gautamkrishnar/keepalive-workflow@v1
