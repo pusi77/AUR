@@ -22,3 +22,6 @@
 [submodule "rain"]
 	path = rain
 	url = https://aur.archlinux.org/rain.git
+[submodule "rain-bin"]
+	path = rain-bin
+	url = https://aur.archlinux.org/rain-bin.git
