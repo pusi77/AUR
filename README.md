@@ -8,3 +8,4 @@ Just:
 ```
 git submodule add https://aur.archlinux.org/$PACKAGE.git
 ```
+and add it to the Github Action too!

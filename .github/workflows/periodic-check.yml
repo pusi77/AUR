@@ -20,6 +20,9 @@ jobs:
           - pkg: python-cipheydists
           - pkg: python-pywhat
           - pkg: subdomainizer
+          - pkg: rain
+          - pkg: rain-bin
+
     steps:
       - name: Check out the codebase.
         uses: actions/checkout@v3
