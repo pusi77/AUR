@@ -29,6 +29,9 @@ jobs:
         with:
           submodules: 'true'
 
+      - name: Pull latest code
+        run: git pull
+
       - name: Exit if pkg doesn't exist.
         run: if [ ! -d "${{ matrix.pkg }}" ]; then exit 1; fi
 

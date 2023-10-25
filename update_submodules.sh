@@ -1,10 +1,4 @@
 #!/bin/bash
 
-for submodule in $(git submodule status | awk '{print $2}')
-do
-    cd "$submodule" || exit
-    echo "Pulling $submodule"
-    git checkout master
-    git pull
-    cd ..
-done
+git submodule update --init --recursive
+git submodule foreach git pull origin master
