@@ -35,6 +35,7 @@ jobs:
       image: archlinux:base-devel
     strategy:
       matrix: ${{fromJson(needs.generate-packages-matrix.outputs.matrix)}}
+      fail-fast: false
     steps:
       - name: Add tester user
         run: |
