@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - develop
-#   schedule:
-#     - cron: '0 2 * * *'
+  schedule:
+    - cron: '56 4 * * *'
 
 jobs:
 
@@ -42,9 +42,7 @@ jobs:
           echo "tester ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
         
       - name: Check out the codebase
-        uses: actions/checkout@v3
-        with:
-          submodules: 'true'
+        uses: actions/checkout@v4
 
       # - name: Exit if pkg doesn't exist.
       #   run: if [ ! -d "${{ matrix.pkg }}" ]; then exit 1; fi
