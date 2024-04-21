@@ -63,8 +63,6 @@ jobs:
       #         shellcheck ci/"${{ matrix.pkg }}"/before_makepkg.sh
       #         docker exec -i "$(cat ${container_id})" sh < ci/"${{ matrix.pkg }}"/before_makepkg.sh
       #     fi
-      - name: ls
-        run: ls
 
       - name: Upgrade all packages
         run: pacman -Suy --noconfirm
