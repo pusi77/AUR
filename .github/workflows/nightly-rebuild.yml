@@ -1,0 +1,69 @@
+---
+name: Nightly rebuild
+on:
+  # push:
+  #   branches:
+  #     - develop
+  schedule:
+    - cron: '45 3 * * *'
+
+jobs:
+
+  generate-packages-matrix:
+    name: Get packages matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: set-matrix
+        id: set-matrix
+        run: |
+          cd packages
+          matrix=""
+          for i in $(ls -d */); do
+            matrix="$matrix{\"pkg\":\"${i%%/}\"},"
+          done
+          matrix="${matrix%,}"
+          echo "matrix={\"include\":[${matrix}]}"  >> $GITHUB_OUTPUT
+
+  test-package-build:
+    name: test-package-build
+    needs: generate-packages-matrix
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+    strategy:
+      matrix: ${{fromJson(needs.generate-packages-matrix.outputs.matrix)}}
+      fail-fast: false
+    steps:
+      - name: Add tester user
+        run: |
+          useradd -m tester
+          echo "tester ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+        
+      - name: Check out the codebase
+        uses: actions/checkout@v4
+
+      - name: Upgrade all packages
+        run: pacman -Suy --noconfirm
+
+      - name: Install namcap
+        run: pacman -S namcap --noconfirm
+
+      - name: Install Paru
+        run: |
+          pacman -S git --noconfirm
+          mkdir /tmp/paru
+          chown -R tester: /tmp/paru
+          cd /tmp/paru      
+          su tester sh -c "git clone https://aur.archlinux.org/paru-bin.git ."
+          su tester sh -c "makepkg -si --noconfirm"     
+
+      - name: Test install package
+        run: |
+          mkdir /tmp/test
+          chown -R tester: /tmp/test
+          cd /tmp/test
+          git clone https://aur.archlinux.org/${{ matrix.pkg }}.git .
+          su tester sh -c "paru -Ui --noconfirm"
