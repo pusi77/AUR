@@ -1,0 +1,50 @@
+---
+name: Auto Updater
+on:
+  # push:
+  #   branches:
+  #     - develop
+  schedule:
+    - cron: '45 7,12,17 * * *'
+
+jobs:
+
+  generate-packages-matrix:
+    name: Get packages matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: set-matrix
+        id: set-matrix
+        run: |
+          cd packages
+          matrix=""
+          for i in $(ls -d */); do
+            matrix="$matrix{\"pkg\":\"${i%%/}\"},"
+          done
+          matrix="${matrix%,}"
+          echo "matrix={\"include\":[${matrix}]}"  >> $GITHUB_OUTPUT
+
+  check-new-version:
+    name: Check new version
+    needs: generate-packages-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.generate-packages-matrix.outputs.matrix)}}
+    steps:
+      - name: Install nvchecker
+        run: pip3 install nvchecker
+      
+      - name: Install jq
+        run: apt update -y && apt install jq -y
+
+      - name: Check out the codebase
+        uses: actions/checkout@v4
+
+      - name: Check new version
+        run: |
+          cd packages/${{ matrix.pkg }}
+          version=$(curl -s "https://aur.archlinux.org/rpc/v5/info?arg[]=${{ matrix.pkg }}" | jq -r '.results[0].Version' | cut -d '-' -f 1)
+          nvchecker -c nvchecker.toml
