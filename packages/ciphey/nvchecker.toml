@@ -1,0 +1,4 @@
+[Ciphey]
+source = "github"
+github = "Ciphey/Ciphey"
+use_latest_release = true
