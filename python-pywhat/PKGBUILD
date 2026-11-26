@@ -1,4 +1,6 @@
-# Maintainer: Roland Nagy <roliboy@protonmail.com>
+# Maintainer: pusi77 <pusineriandrea+gmail+com>
+# Contributor: pusi77-robot <pusineriandrea+gmail+com>
+# Contributor: Roland Nagy <roliboy@protonmail.com>
 
 pkgname=python-pywhat
 pkgver=5.1.0

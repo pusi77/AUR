@@ -49,6 +49,6 @@ jobs:
           # AUR host keys: https://aur.archlinux.org (homepage footer lists fingerprints)
           ssh-keyscan -t ed25519 aur.archlinux.org > ~/.ssh/known_hosts
           printf 'Host aur.archlinux.org\n  User aur\n  IdentityFile ~/.ssh/aur\n' > ~/.ssh/config
-          git config --global user.name pusi77
+          git config --global user.name pusi77-robot
           git config --global user.email pusi77@users.noreply.github.com
       - run: ci/publish.sh ${{ matrix.pkg }}
