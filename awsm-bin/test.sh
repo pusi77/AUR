@@ -1,0 +1,1 @@
+awsm --help >/dev/null
