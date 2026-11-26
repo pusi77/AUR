@@ -1,0 +1,52 @@
+name: Check for updates
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      updates: ${{ steps.check.outputs.updates }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install --quiet nvchecker
+      - id: check
+        env:
+          NVCHECKER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "updates=$(ci/check.py)" >> "$GITHUB_OUTPUT"
+
+  bump:
+    needs: check
+    if: needs.check.outputs.updates != '[]'
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.check.outputs.updates) }}
+    steps:
+      - run: pacman -Syu --noconfirm --needed git pacman-contrib
+      - uses: actions/checkout@v4
+      - name: Bump
+        env: # via env, never ${{ }} in run: the version is an upstream-controlled string
+          PKG: ${{ matrix.pkg }}
+          VER: ${{ matrix.ver }}
+        run: |
+          useradd -m builder
+          chown -R builder: .
+          su builder -c 'ci/bump.sh "$PKG" "$VER"'
+          chown -R root: .
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          # PAT so the PR triggers the test workflow (GITHUB_TOKEN PRs don't)
+          token: ${{ secrets.PR_TOKEN }}
+          branch: update/${{ matrix.pkg }}
+          add-paths: ${{ matrix.pkg }}
+          commit-message: "${{ matrix.pkg }}: update to ${{ matrix.ver }}"
+          title: "${{ matrix.pkg }}: update to ${{ matrix.ver }}"
+          body: |
+            nvchecker found `${{ matrix.pkg }}` ${{ matrix.ver }}.
+            Merge to publish to AUR.
+          delete-branch: true

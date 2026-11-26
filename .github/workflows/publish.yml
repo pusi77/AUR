@@ -1,0 +1,54 @@
+name: Publish to AUR
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      pkg:
+        description: package dir to publish
+        required: true
+
+jobs:
+  changed:
+    runs-on: ubuntu-latest
+    outputs:
+      pkgs: ${{ steps.pkgs.outputs.pkgs }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: pkgs
+        env:
+          INPUT_PKG: ${{ inputs.pkg }}
+        run: |
+          if [ -n "$INPUT_PKG" ]; then
+            dirs="$INPUT_PKG"
+          else
+            dirs=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" | cut -d/ -f1 | sort -u)
+          fi
+          pkgs=$(for d in $dirs; do [ -f "$d/PKGBUILD" ] && echo "$d"; done | jq -Rnc '[inputs]')
+          echo "pkgs=$pkgs" >> "$GITHUB_OUTPUT"
+
+  publish:
+    needs: changed
+    if: needs.changed.outputs.pkgs != '[]'
+    runs-on: ubuntu-latest
+    concurrency: aur-${{ matrix.pkg }}
+    strategy:
+      fail-fast: false
+      matrix:
+        pkg: ${{ fromJson(needs.changed.outputs.pkgs) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up AUR ssh
+        env:
+          AUR_SSH_KEY: ${{ secrets.AUR_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$AUR_SSH_KEY" > ~/.ssh/aur && chmod 600 ~/.ssh/aur
+          # AUR host keys: https://aur.archlinux.org (homepage footer lists fingerprints)
+          ssh-keyscan -t ed25519 aur.archlinux.org > ~/.ssh/known_hosts
+          printf 'Host aur.archlinux.org\n  User aur\n  IdentityFile ~/.ssh/aur\n' > ~/.ssh/config
+          git config --global user.name pusi77
+          git config --global user.email pusi77@users.noreply.github.com
+      - run: ci/publish.sh ${{ matrix.pkg }}

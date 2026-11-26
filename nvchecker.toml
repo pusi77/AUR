@@ -1,0 +1,58 @@
+# One entry per package dir. Key = pkgbase. Versions must match pkgver exactly.
+[__config__]
+oldver = "old.json"
+newver = "new.json"
+
+[awsm-bin]
+source = "github"
+github = "AleG03/awsm"
+use_latest_release = true
+prefix = "v"
+
+[ciphey]
+source = "github"
+github = "bee-san/Ciphey"
+use_latest_release = true
+prefix = "v"
+
+[ciphey-bin]
+source = "github"
+github = "bee-san/Ciphey"
+use_latest_release = true
+prefix = "v"
+
+[hypnotix-wayland]
+source = "github"
+github = "linuxmint/hypnotix"
+use_max_tag = true
+include_regex = '^\d+(\.\d+)*$'
+
+[python-pywhat]
+source = "pypi"
+pypi = "pywhat"
+
+[rain]
+source = "github"
+github = "aws-cloudformation/rain"
+use_latest_release = true
+prefix = "v"
+
+[rain-bin]
+source = "github"
+github = "aws-cloudformation/rain"
+use_latest_release = true
+prefix = "v"
+
+[subdomainizer]
+source = "github"
+github = "nsonaniya2010/SubDomainizer"
+use_latest_release = true
+prefix = "v"
+
+[subrake]
+source = "github"
+github = "hash3liZer/Subrake"
+use_latest_release = true
+prefix = "v"
+
+# libfprint-goodix-53xc: Dell .deb, no upstream feed; update by hand.

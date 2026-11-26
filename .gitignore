@@ -1,0 +1,5 @@
+old.json
+new.json
+*.pkg.tar.*
+src/
+pkg/
