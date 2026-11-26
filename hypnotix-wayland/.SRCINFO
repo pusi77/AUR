@@ -1,0 +1,23 @@
+pkgbase = hypnotix-wayland
+	pkgdesc = An IPTV streaming application. (With Wayland support).
+	pkgver = 5.10
+	pkgrel = 1
+	url = https://github.com/linuxmint/hypnotix
+	arch = any
+	license = GPL3
+	depends = dconf
+	depends = hicolor-icon-theme
+	depends = mpv
+	depends = python-cairo
+	depends = python-cinemagoer
+	depends = python-gobject
+	depends = python-requests
+	depends = python-setproctitle
+	depends = python-unidecode
+	depends = xapp
+	conflicts = hypnotix
+	conflicts = hypnotix-git
+	source = hypnotix-5.10.tar.gz::https://github.com/linuxmint/hypnotix/archive/refs/tags/5.10.tar.gz
+	sha256sums = a0aef01c372c7fc649a03e60ca8da88f417bf591ed0bacf6cb4ff104b1fca1cc
+
+pkgname = hypnotix-wayland

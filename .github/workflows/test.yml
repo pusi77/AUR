@@ -1,0 +1,40 @@
+name: Test
+on:
+  pull_request:
+  schedule:
+    - cron: "0 4 * * 0" # weekly full rebuild catches breakage from repo deps
+  workflow_dispatch:
+
+jobs:
+  changed:
+    runs-on: ubuntu-latest
+    outputs:
+      pkgs: ${{ steps.pkgs.outputs.pkgs }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: pkgs
+        run: |
+          if [ "${{ github.event_name }}" = pull_request ]; then
+            dirs=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" | cut -d/ -f1 | sort -u)
+          else
+            dirs=$(ls)
+          fi
+          # only dirs that hold a PKGBUILD; a ci/ change retests everything
+          echo "$dirs" | grep -qx ci && dirs=$(ls)
+          pkgs=$(for d in $dirs; do [ -f "$d/PKGBUILD" ] && echo "$d"; done | jq -Rnc '[inputs]')
+          echo "pkgs=$pkgs" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: changed
+    if: needs.changed.outputs.pkgs != '[]'
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    strategy:
+      fail-fast: false
+      matrix:
+        pkg: ${{ fromJson(needs.changed.outputs.pkgs) }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: ci/build.sh ${{ matrix.pkg }}
