@@ -1,0 +1,1 @@
+subdomainizer -h >/dev/null

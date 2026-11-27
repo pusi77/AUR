@@ -17,5 +17,5 @@ if git diff --cached --quiet; then
   echo "$pkg: AUR already up to date"
   exit 0
 fi
-git commit -qm "$(git -C "$repo" log -1 --format=%B -- "$pkg")"
+git commit -qm "$(git -C "$repo" log -1 --no-merges --format=%B -- "$pkg")"
 git push origin HEAD:master
